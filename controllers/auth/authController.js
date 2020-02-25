@@ -35,26 +35,14 @@ router.get('/', (req, res, next) => {
 
 router.post('/signup', (req, res, next) => {
 
-
-    // var abc = validateEmail(req.body.email)
-    // console.log(abc)
-    // console.log(req.body);
-    // var cba = validatePassword(req.body.password)
-    // console.log(cba)
-
     if (validateEmail(req.body.email) && validatePassword(req.body.password)) {
 
 
         var user = new User(req.body.name, req.body.username, req.body.email, req.body.password);
 
-        // var user = {
-        //     name: req.body.name,
-        //     username: req.body.username,
-        //     email: req.body.email,
-        //     password: req.body.password
-        //}
+    
         arrayList.push(user);
-        //fs.appendFileSync('./users.json', user.name + '  ' + user.password + ' ')
+        fs.writeFileSync('./users.json', JSON.stringify(arrayList) + "\n")
         res.status(200).json({
             status: 'success'
         })
@@ -65,5 +53,30 @@ router.post('/signup', (req, res, next) => {
         })
     }
 })
+
+
+
+router.post('/login',(req,res,next)=>{
+    
+    let vald = fs.readFileSync('./users.json',"utf8");
+    let bald = JSON.parse(vald)
+
+    for(var i =0;i<bald.length;i++){
+        var username = bald[i].username;
+        var password = bald[i].password;
+        if (username===req.body.username&&password===req.body.password) {
+            res.status(200).json({
+                status: 'Login Successful'
+            })
+    }
+    
+    }
+    res.status(200).json({
+        status: 'Login Failed'
+    })
+
+})
+
+
 
 module.exports = router
